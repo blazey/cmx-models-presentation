@@ -1,0 +1,162 @@
+Domain Modelling
+=
+
+Why do I want to talk about this?
+==
+* I think we have good developers, who solve hard problems
+* I feel some simple concepts can make our code cleaner, easier to test and more maintainable
+
+Why model?
+==
+* Domain models represent part of a business process
+* They include data (state) *and* business logic (behaviour)
+* Maintainability. Supporting intuitive code that reflects the problem domain is easier to comprehend, test, refactor, change and is heuristic forcing the team to build domain knowledge?
+
+Anaemic Model (Anti Pattern)
+==
+* Bags of data that contain little or no behaviour
+* "It's all CRUD"
+* Impossible to enforce business logic because state can be manipulated outside of intended use
+* Business logic in "Services"
+* Write only code
+
+Rich Model
+==
+* Put behaviour and state together
+* Galloping horse example:
+
+public class Horse {
+	public string Leg1 { get; set; }
+	public string Leg2 { get; set; }
+	public string Leg3 { get; set; }
+	public string Leg4 { get; set; }
+}
+
+public class MoveHorse {
+	public Gallop(Horse horse, int steps) {
+		for(step = 0;step > steps;step++) {
+			horse.Leg1 = "Move Fast";
+			horse.Leg2 = "Move Fast";
+			horse.Leg1 = "Put on ground";
+			horse.Leg2 = "Put on Ground";
+			horse.Leg3 = "Move Fast";
+			horse.Leg4 = "Move Fast";
+		}
+	}
+
+	public Cantor(Horse horse, int steps) {
+		for(step = 0;step > steps;step++) {
+			horse.Leg1 = "Move slow";
+			horse.Leg1 = "Put on ground";
+			horse.Leg2 = "Move slow";
+			horse.Leg2 = "Put on ground";
+			horse.Leg3 = "Move slow";
+			horse.Leg3 = "Put on ground";
+			horse.Leg4 = "Move slow";
+			horse.Leg4 = "Put on ground";
+		}
+	}
+	.
+	.
+}
+
+Oops. The algorithm is wrong. What if another class moves the horse? This can get complicated quickly and it's not intuitive to find the relationship, especially without static analysis tools.
+
+An alternative:
+
+class Horse {
+	private Leg leg1;
+	private Leg leg2;
+	private Leg leg3;
+	private Leg leg4;
+	.
+	.
+	void Gallop() {..}
+	void Cantor() {..}
+}
+
+Remember state *and* behaviour.
+
+*An object communicates by messages: It receives messages from other objects and reacts by sending messages to other objects as well as, perhaps, returning a value or exception to the original sender. An object has a method of handling every type of message that it understands and, in most cases, encapsulates some internal state that it uses to coordinate its communication with other objects.
+
+An object-oriented system is a web of collaborating objects. A system is built by creating objects and plugging them together so that they can send messages to one another. The behavior of the system is an emergent property of the composition of the objects—the choice of objects and how they are connected (Figure 2.1).
+
+This lets us change the behavior of the system by changing the composition of its objects—adding and removing instances, plugging different combinations together—rather than writing procedural code. The code we write to manage this composition is a declarative definition of the how the web of objects will behave. It’s easier to change the system’s behavior because we can focus on what we want it to do, not how.*
+
+Different types of object in a model
+==
+
+* Value Object
+* Entity
+* It's all about the identity
+* Service layer
+
+Value Objects
+==
+* Enforcing invariants
+* Primitive obsession (anti-pattern)
+
+class Money {
+	ctor(double value, Currency currency){..}
+
+	Equals(Money other){
+		return other.value == this.value && other.currency == this.currency;
+	}
+}
+
+var five_pounds = new Money(5, GBP);
+var ten_pounds = new Money(10, GBP);
+
+class Note {
+	ctor(SerialNumber serial_number){..}
+
+	Equals(Note other){
+		return other.serial_number == this.serial_number;
+	}
+}
+
+Represent two different things.
+
+class AccountId {
+	ctor(string id){..}
+	Equals(AccountId){..}
+}
+
+class AuthToken {
+	ctor(string id){..}
+	Equals(AuthToken){..}
+}
+
+Both use Guids under the hood but now:
+* Can't accidental confuse them
+* What happens if we want to change the data-type or how it's formed? I.e. sequential guid for more db efficient guids? Or guids formed differently for sharding?
+
+Entity
+==
+
+* Defined by identity
+* Here lives behaviour!
+
+*..a category of objects which seem to have an identity, 
+which remains the same throughout the states of the software. 
+For these objects it is not the attributes which matter, but a 
+thread of continuity and identity, which spans the  life of a 
+system and can extend beyond it. Such objects are called Entities*
+
+- Eric Evans, Domain Driven Design
+
+
+class Product {
+	private ProductId;
+	Publish(){..}
+	AddOffer(Offer){..}
+	.
+	.
+
+	Equals(Product){
+		return Product.ProductId == this.ProductId;
+	}
+
+}
+
+

@@ -1,0 +1,25 @@
+Ideas
+
+* model represents business problem, not real world
+* relationship between objects and how they communicate
+* Encapsulate data and behaviour
+* What's a noun? What's a verb?
+* Put logic where it belongs
+* CRUD is bad. Why? (http://bill-poole.blogspot.co.uk/2008/02/crud-is-bad.html)
+* Anemic model
+* Value Objects
+* Entities
+* Graphs and encapsulation: Aggregates
+* enforce invariants
+* maintenance!
+
+Noun
+A word (other than a pronoun) used to identify any of a class of people, places, or things 
+
+ 
+The antithesis of a fat model is an anaemic model. This is an anti-pattern, here’s a rant from Martin Fowler critiquing anaemic models
+An aggregate root is the root entity to access it’s encapsulated entities i.e. OrderLines have no reason to exist without their parent Order, nor can they belong to any other Order. Ergo an Order is an aggregate root.
+Entities and Value Objects. These live within the aggregate and are accessed via their aggregate root.
+Entities, Value Objects, Aggregates and Roots
+
+Other classes cannot directly affect the state of a class. It is achieved through passing messages to (calling methods on) an object. This helps enforce loose coupling and high cohesion.

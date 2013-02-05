@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+
+	<title>reveal.js - The HTML Presentation Framework</title>
+
+	<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+	<meta name="author" content="Hakim El Hattab">
+
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+	<link rel="stylesheet" href="css/reveal.min.css">
+	<link rel="stylesheet" href="css/theme/default.css" id="theme">
+
+	<!-- For syntax highlighting -->
+	<link rel="stylesheet" href="lib/css/zenburn.css">
+
+	<!-- If the query includes 'print-pdf', use the PDF print sheet -->
+	<script>
+	document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+	</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+
+				<section>
+					<h1>Domain Modelling</h1>
+					<h3>What makes you different from your competition</h3>
+					<p>
+						<small>Created by <a href="http://ejb.name">Ed Blackburn</a> / <a href="http://twitter.com/ejblackburn">@ejblackburn</a></small>
+					</p>
+				</section>
+
+				<section>
+					<h2>Why do I want to talk about this?</h2>
+					<p>
+						<ul>
+							<li>I think we have good developers, who solve non-trivial problems</li>
+							<li>I feel some simple concepts can make our code cleaner, easier to test, scale and more maintainable</li>
+						</ul>
+					</p>
+
+					<aside class="notes"></aside>
+				</section>
+
+				<section>
+					<h2>Why model?</h2>
+					<p>
+						<ul>
+							<li>Domain models represent part of a business process</li>
+							<li>They include data (state) <em>and</em> business logic (behaviour)</li>
+							<li>Maintainability. Supporting intuitive code that reflects the problem domain is easier to comprehend, test, refactor, change and is heuristic, forcing the team to build domain knowledge?</li>
+						</ul>
+					</p>
+
+					<aside class="notes"></aside>
+				</section>
+				<section>
+					<section>
+						<h2>Anaemic Model (Anti Pattern)</h2>
+						<p>
+							<ul>
+								<li>There is no behaviour. <em>It's all CRUD</em></li>
+								<li>Primitive obsession</li>
+								<li>Mutable bags of data that contain little or no behaviour</li>
+								<li>Impossible to enforce business logic because state can be manipulated outside of intended use</li>
+								<li>Business logic in "Services"</li>
+								<li>Write only code</li>
+								<li>Feature Envy anti-pattern</li>
+							</ul>
+						</p>
+
+						<aside class="notes"></aside>
+					</section>
+
+
+
+					<section>
+						<h3>Anaemic</h3>
+						<ul><li>Why is this mutable?</li>
+							<li>Why are they strings, do horses have legs, or strings?</li>
+						</ul>
+						<pre><code contenteditable>
+public class Horse {
+	public string Leg1 { get; set; }
+	public string Leg2 { get; set; }
+	public string Leg3 { get; set; }
+	public string Leg4 { get; set; }
+}
+					</code></pre>
+				</section>
+				<section>
+					<h3>Example</h3>
+					<pre><code contenteditable>
+public class MoveHorse {
+	public Gallop(Horse horse, int steps) {
+		for(step = 0;step > steps;step++) {
+			horse.Leg1 = "Move Fast";
+			horse.Leg2 = "Move Fast";
+			horse.Leg1 = "Put on ground";
+			horse.Leg2 = "Put on Ground";
+			horse.Leg3 = "Move Fast";
+			horse.Leg4 = "Move Fast";
+		}
+	}
+
+	public Cantor(Horse horse, int steps) {
+		for(step = 0;step > steps;step++) {
+			horse.Leg1 = "Move slow";
+			horse.Leg1 = "Put on ground";
+			horse.Leg2 = "Move slow";
+			horse.Leg2 = "Put on ground";
+			horse.Leg3 = "Move slow";
+			horse.Leg3 = "Put on ground";
+			horse.Leg4 = "Move slow";
+			horse.Leg4 = "Put on ground";
+		}
+	}
+	.
+	.
+}
+</code></pre>
+</section>
+<section>
+	<h3>Oops.</h3>
+	<p>The algorithm is wrong. This can get complicated quickly and is not intuitive.</p>
+</section>
+</section>
+<section>
+	<section>
+		<h2>Rich Model</h2>
+		<p>
+			<ul>
+				<li>Put behaviour and state together</li>
+				<li><em>Tell don't ask</em></li>
+				<li>Do <em>not</em> expose internals. Do not expose data structures</li>
+				<li>There is not such thing as a string!</li>
+				<li>Equality v Equivalence</li>
+			</ul>
+		</p>	
+	</section>				
+	<section>
+		<h2>An alternative:</h2>
+		<ul>
+			<li>No primitives</li>
+			<li>State encapsulated</li>
+		</ul>
+		<pre><code contenteditable>
+class Horse {
+	private Leg leg1;
+	private Leg leg2;
+	private Leg leg3;
+	private Leg leg4;
+	.
+	.
+	void Gallop() {..}
+	void Cantor() {..}
+}
+	</code></pre>
+</section>	
+</section>
+
+
+</section>
+
+<section>
+	<h2>Different types of object in a model</h2>
+	<ul>
+		<li>Value Object</li>
+		<li>Entity</li>
+		<li>It's all about the identity</li>
+		<li>Service layer</li>
+	</ul>
+</section>
+<section>
+	<section>
+		<h2>Value Objects</h2>
+
+
+		<p>Immutable types. Enforce invariants: a name is not a string. A name can not be null or empty, can not begin or end with white space.</p>
+		<pre><code contenteditable>
+class Name {
+	ctor(string name) {
+		throw if null
+		name = name.trim()
+		throw if empty
+	}
+	Equals(Name) {..}
+}
+</code></pre>
+
+</section>
+<section>
+	<h2>Money Example</h2>
+	<pre><code contenteditable>
+class Money {
+	ctor(double value, Currency currency){..}
+
+	Equals(Money other){
+		return other.value == this.value && other.currency == this.currency;
+	}
+}
+
+var five_pounds = new Money(5, new GBP());
+var ten_pounds = new Money(10, new GBP());
+
+class Note {
+	ctor(SerialNumber serial_number){..}
+
+	Equals(Note other){
+		return other.serial_number == this.serial_number;
+	}
+}
+</code></pre>
+</section>
+<section>
+	<h3>Something closer to home</h3>
+	<p>Represent two different things. Both use Guids..</p>
+	<pre><code contenteditable>
+class AccountId {
+	ctor(string id){..}
+	Equals(AccountId){..}
+}
+
+class AuthToken {
+	ctor(string id){..}
+	Equals(AuthToken){..}
+}
+</code></pre>
+<ul>
+	<li>Can't accidental confuse them</li>
+	<li>What happens if we want to change the data-type or how it's formed? I.e. sequential guid for more db efficient guids? Or guids formed differently for sharding?</li>
+</section>
+</section>
+<section>
+	<section>
+		<h2>Entities</h2>
+		<ul>
+			<li>Defined by identity</li>
+			<li>Here lives behaviour!</li>
+			<blockquote cite>
+				..a category of objects which seem to have an identity, 
+				which remains the same throughout the states of the software. 
+				For these objects it is not the attributes which matter, but a 
+				thread of continuity and identity, which spans the  life of a 
+				system and can extend beyond it. Such objects are called Entities
+			</blockquote>
+			<p>- Eric Evans</p>
+		</ul>
+	</section>
+	<section>
+		<h2>Example</h2>
+		<pre><code contenteditable>
+class Product {
+	private ProductId;
+	Publish(){..}
+	AddOffer(Offer){..}
+	.
+	.
+
+		Equals(Product){
+		return Product.ProductId == this.ProductId;
+	}
+
+}</code></pre>
+</section>
+</section>
+<section>
+	<h2>Aggregates</h2>
+	<ul>
+		<li>An encapsulated graph of domain objects</li>
+		<li><em>Only</em> accessible via the <bold>root</bold> object</li>
+		<li>Remember do not expose data structures</li>
+	</ul>
+</section>
+<section>
+	<h2>Further concepts</h2>
+	<ul>
+		<li>Hypermedia APIs</li>
+		<li>CQRS</li>
+		<li>Repository Pattern</li>
+		<li>Document databases</li>
+		<li>Bounded Contexts</li>
+		<li>Ubiquitous language</li>
+	</ul>
+</section>
+<section>
+	<h2>Enterprise Bullshit?</h2>
+	<ul>
+		<li><a href="http://37signals.com/svn/posts/3375-the-five-programming-books-that-meant-most-to-me">The five programming books that meant most to me</a></li>
+	</ul>
+</section>
+</div>
+
+</div>
+
+<script src="lib/js/head.min.js"></script>
+<script src="js/reveal.min.js"></script>
+
+<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+				{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+				{ src: 'plugin/markdown/showdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+				{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+				{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+				{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+				{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+					// { src: 'plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
+					]
+				});
+
+</script>
+
+</body>
+</html>
